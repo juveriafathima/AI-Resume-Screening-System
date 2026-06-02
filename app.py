@@ -2,8 +2,7 @@ from flask import Flask, render_template, request
 import os
 
 from resume_analyzer import (
-    extract_resume_text,
-    get_resume_suggestions
+    extract_resume_text
 )
 
 from nlp_processor import (
@@ -18,8 +17,10 @@ from ml_model import (
 
 app = Flask(__name__)
 
+# Upload folder
 UPLOAD_FOLDER = "uploads"
 
+# Create uploads folder automatically
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -33,14 +34,17 @@ def home():
 @app.route("/analyze", methods=["POST"])
 def analyze_resume():
 
+    # Check if file uploaded
     if "resume" not in request.files:
         return "No file uploaded"
 
     file = request.files["resume"]
 
+    # Empty file check
     if file.filename == "":
         return "Please upload a resume"
 
+    # Save file
     filepath = os.path.join(
         app.config["UPLOAD_FOLDER"],
         file.filename
@@ -48,26 +52,38 @@ def analyze_resume():
 
     file.save(filepath)
 
-    resume_text = extract_resume_text(filepath)
+    # Extract resume text
+    resume_text = extract_resume_text(
+        filepath
+    )
 
-    skills = extract_skills(resume_text)
+    # Extract skills
+    skills = extract_skills(
+        resume_text
+    )
 
-    predicted_role = predict_role(skills)
+    # Predict role
+    predicted_role = predict_role(
+        skills
+    )
 
-    resume_score = calculate_resume_score(skills)
+    # Resume score
+    resume_score = calculate_resume_score(
+        skills
+    )
 
-    missing = missing_skills(skills)
+    # Missing skills
+    missing = missing_skills(
+        skills
+    )
 
-    try:
-        ai_suggestions = get_resume_suggestions(
-            resume_text[:2000]
-        )
-
-    except:
-        ai_suggestions = """
+    # Static suggestions (fast + Render friendly)
+    ai_suggestions = """
 - Add more technical skills
-- Improve project descriptions
-- Make resume ATS friendly
+- Add projects section
+- Improve ATS keywords
+- Add certifications
+- Improve formatting
 """
 
     return f"""
@@ -209,7 +225,7 @@ def analyze_resume():
         {predicted_role}
     </div>
 
-    <h2>AI Suggestions</h2>
+    <h2>Resume Suggestions</h2>
 
     <div class="suggestions">
         {ai_suggestions}
