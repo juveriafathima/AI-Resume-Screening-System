@@ -78,11 +78,16 @@ def analyze_resume():
         skills
     )
 
-    # AI suggestions
+   try:
     ai_suggestions = get_resume_suggestions(
-        resume_text
+        resume_text[:2000]
     )
-
+except:
+    ai_suggestions = """
+    - Add more technical skills
+    - Improve project descriptions
+    - Make resume ATS friendly
+    """
     # Display result
     return f"""
     <h2>Resume Analysis Complete</h2>
