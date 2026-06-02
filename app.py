@@ -41,19 +41,19 @@ def analyze_resume():
 
     file = request.files["resume"]
 
-    # Check empty filename
+    # Check empty file
     if file.filename == "":
         return "Please upload a resume"
 
+    # Save uploaded file
     filepath = os.path.join(
         app.config["UPLOAD_FOLDER"],
         file.filename
     )
 
-    # Save uploaded file
     file.save(filepath)
 
-    # Extract text
+    # Extract resume text
     resume_text = extract_resume_text(
         filepath
     )
@@ -78,43 +78,54 @@ def analyze_resume():
         skills
     )
 
-   try:
-    ai_suggestions = get_resume_suggestions(
-        resume_text[:2000]
-    )
-except:
-    ai_suggestions = """
-    - Add more technical skills
-    - Improve project descriptions
-    - Make resume ATS friendly
-    """
-    # Display result
+    # AI Suggestions (safe for Render free plan)
+    try:
+        ai_suggestions = get_resume_suggestions(
+            resume_text[:2000]
+        )
+
+    except:
+        ai_suggestions = """
+- Add more technical skills
+- Improve project descriptions
+- Make resume ATS friendly
+"""
+
+    # Result page
     return f"""
-    <h2>Resume Analysis Complete</h2>
+    <html>
+    <head>
+        <title>Resume Analysis</title>
+    </head>
 
-    <h3>Resume Score:</h3>
-    <p>{resume_score}/100</p>
+    <body style="font-family: Arial; padding: 30px;">
 
-    <h3>Detected Skills:</h3>
+        <h2>Resume Analysis Complete</h2>
 
-    <ul>
-        {''.join([f'<li>{skill}</li>' for skill in skills])}
-    </ul>
+        <h3>Resume Score:</h3>
+        <p>{resume_score}/100</p>
 
-    <h3>Missing Skills:</h3>
+        <h3>Detected Skills:</h3>
+        <ul>
+            {''.join([f'<li>{skill}</li>' for skill in skills])}
+        </ul>
 
-    <ul>
-        {''.join([f'<li>{skill}</li>' for skill in missing])}
-    </ul>
+        <h3>Missing Skills:</h3>
+        <ul>
+            {''.join([f'<li>{skill}</li>' for skill in missing])}
+        </ul>
 
-    <h3>Recommended Role:</h3>
-    <p>{predicted_role}</p>
+        <h3>Recommended Role:</h3>
+        <p>{predicted_role}</p>
 
-    <h3>AI Suggestions:</h3>
-    <p>{ai_suggestions}</p>
+        <h3>AI Suggestions:</h3>
+        <pre>{ai_suggestions}</pre>
 
-    <br><br>
-    <a href="/">Analyze Another Resume</a>
+        <br>
+        <a href="/">Analyze Another Resume</a>
+
+    </body>
+    </html>
     """
 
 
