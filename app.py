@@ -48,25 +48,15 @@ def analyze_resume():
 
     file.save(filepath)
 
-    resume_text = extract_resume_text(
-        filepath
-    )
+    resume_text = extract_resume_text(filepath)
 
-    skills = extract_skills(
-        resume_text
-    )
+    skills = extract_skills(resume_text)
 
-    predicted_role = predict_role(
-        skills
-    )
+    predicted_role = predict_role(skills)
 
-    resume_score = calculate_resume_score(
-        skills
-    )
+    resume_score = calculate_resume_score(skills)
 
-    missing = missing_skills(
-        skills
-    )
+    missing = missing_skills(skills)
 
     try:
         ai_suggestions = get_resume_suggestions(
@@ -81,94 +71,161 @@ def analyze_resume():
 """
 
     return f"""
-    <html>
+<html>
 
-    <head>
-        <title>Resume Analysis</title>
+<head>
+    <title>AI Resume Analyzer</title>
 
-        <style>
-            body {{
-                font-family: Arial;
-                background: #f4f4f4;
-                padding: 30px;
-            }}
+    <style>
 
-            .container {{
-                background: white;
-                padding: 30px;
-                border-radius: 12px;
-                max-width: 800px;
-                margin: auto;
-                box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            }}
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }}
 
-            .score {{
-                font-size: 28px;
-                color: green;
-                font-weight: bold;
-            }}
+        body {{
+            background: #eef2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }}
 
-            .skill {{
-                display: inline-block;
-                background: #007bff;
-                color: white;
-                padding: 8px 15px;
-                border-radius: 20px;
-                margin: 5px;
-            }}
+        .container {{
+            background: white;
+            width: 90%;
+            max-width: 850px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+            border: 1px solid #ddd;
+        }}
 
-            .missing {{
-                background: red;
-            }}
+        h1 {{
+            text-align: center;
+            color: #222;
+            margin-bottom: 25px;
+        }}
 
-            h2 {{
-                color: #333;
-            }}
-        </style>
-    </head>
+        h2 {{
+            color: #333;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }}
 
-    <body>
+        .score-box {{
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px;
+            font-size: 35px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }}
 
-    <div class="container">
+        .skills-container {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }}
 
-        <h2>Resume Analysis Complete 🚀</h2>
+        .skill {{
+            background: #007bff;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 15px;
+        }}
 
-        <h3>ATS Resume Score</h3>
-        <p class="score">{resume_score}/100</p>
+        .missing {{
+            background: #ff4d4d;
+        }}
 
-        <h3>Detected Skills</h3>
+        .role-box {{
+            background: #f4f6f9;
+            border-left: 6px solid #007bff;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: bold;
+        }}
 
-        {
-            ''.join([
-                f'<span class="skill">{skill}</span>'
-                for skill in skills
-            ])
-        }
+        .suggestions {{
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 12px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }}
 
-        <h3>Missing Skills</h3>
+        .btn {{
+            display: inline-block;
+            margin-top: 30px;
+            background: #007bff;
+            color: white;
+            padding: 14px 25px;
+            text-decoration: none;
+            border-radius: 10px;
+        }}
 
-        {
-            ''.join([
-                f'<span class="skill missing">{skill}</span>'
-                for skill in missing
-            ])
-        }
+        .btn:hover {{
+            background: #0056b3;
+        }}
 
-        <h3>Recommended Role</h3>
-        <p><b>{predicted_role}</b></p>
+    </style>
+</head>
 
-        <h3>AI Suggestions</h3>
-        <pre>{ai_suggestions}</pre>
+<body>
 
-        <br><br>
+<div class="container">
 
-        <a href="/">Analyze Another Resume</a>
+    <h1>🚀 AI Resume Analysis</h1>
 
+    <h2>ATS Resume Score</h2>
+
+    <div class="score-box">
+        {resume_score}/100
     </div>
 
-    </body>
-    </html>
-    """
+    <h2>Detected Skills</h2>
+
+    <div class="skills-container">
+        {''.join([f'<span class="skill">{skill}</span>' for skill in skills])}
+    </div>
+
+    <h2>Missing Skills</h2>
+
+    <div class="skills-container">
+        {''.join([f'<span class="skill missing">{skill}</span>' for skill in missing])}
+    </div>
+
+    <h2>Recommended Role</h2>
+
+    <div class="role-box">
+        {predicted_role}
+    </div>
+
+    <h2>AI Suggestions</h2>
+
+    <div class="suggestions">
+        {ai_suggestions}
+    </div>
+
+    <center>
+        <a href="/" class="btn">
+            Analyze Another Resume
+        </a>
+    </center>
+
+</div>
+
+</body>
+</html>
+"""
 
 
 if __name__ == "__main__":
