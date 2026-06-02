@@ -93,13 +93,13 @@ def analyze_resume():
     <h3>Detected Skills:</h3>
 
     <ul>
-        {''.join([f'<li>{skill}</li>' for skill in skills)}
+        {''.join([f'<li>{skill}</li>' for skill in skills])}
     </ul>
 
     <h3>Missing Skills:</h3>
 
     <ul>
-        {''.join([f'<li>{skill}</li>' for skill in missing)}
+        {''.join([f'<li>{skill}</li>' for skill in missing])}
     </ul>
 
     <h3>Recommended Role:</h3>
