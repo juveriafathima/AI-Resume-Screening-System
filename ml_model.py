@@ -1,69 +1,39 @@
 def predict_role(skills):
 
-    developer_skills = [
-        "python",
-        "java",
-        "sql",
-        "flask",
-        "html",
-        "css",
-        "javascript"
-    ]
+    skills = [skill.lower() for skill in skills]
 
-    ai_skills = [
-        "python",
-        "machine learning",
-        "aws"
-    ]
+    if "python" in skills and "machine learning" in skills:
+        return "AI / ML Engineer"
 
-    developer_score = 0
-    ai_score = 0
+    elif "html" in skills and "css" in skills and "javascript" in skills:
+        return "Frontend Developer"
 
-    for skill in skills:
+    elif "python" in skills and "flask" in skills:
+        return "Backend Developer"
 
-        if skill in developer_skills:
-            developer_score += 1
+    elif "sql" in skills and "aws" in skills:
+        return "Cloud / Database Engineer"
 
-        if skill in ai_skills:
-            ai_score += 1
-
-    if developer_score > ai_score:
-        role = "Software Developer"
-
-    elif ai_score > developer_score:
-        role = "AI / ML Engineer"
+    elif "java" in skills:
+        return "Software Developer"
 
     else:
-        role = "General IT Role"
-
-    return role
+        return "General IT Role"
 
 
 def calculate_resume_score(skills):
 
-    important_skills = [
-        "python",
-        "java",
-        "sql",
-        "aws",
-        "flask",
-        "html",
-        "css",
-        "javascript",
-        "communication"
-    ]
+    score = len(skills) * 10
 
-    score = (
-        len(skills)
-        / len(important_skills)
-    ) * 100
+    if score > 100:
+        score = 100
 
-    return round(score)
+    return score
 
 
 def missing_skills(skills):
 
-    required_skills = [
+    important_skills = [
         "python",
         "sql",
         "aws",
@@ -73,7 +43,7 @@ def missing_skills(skills):
 
     missing = []
 
-    for skill in required_skills:
+    for skill in important_skills:
 
         if skill not in skills:
             missing.append(skill)

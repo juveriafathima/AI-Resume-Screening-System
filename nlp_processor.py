@@ -1,25 +1,30 @@
+import re
+
+# Bigger skills database
+skills_database = [
+    "python", "java", "c", "c++", "sql",
+    "mysql", "html", "css", "javascript",
+    "react", "flask", "aws", "cloud",
+    "machine learning", "artificial intelligence",
+    "ai", "nlp", "git", "github",
+    "docker", "data structures",
+    "algorithms", "problem solving",
+    "communication", "teamwork",
+    "leadership", "excel",
+    "power bi", "tableau"
+]
+
+
 def extract_skills(text):
 
-    skills = [
-        "python",
-        "java",
-        "sql",
-        "aws",
-        "machine learning",
-        "flask",
-        "html",
-        "css",
-        "javascript",
-        "communication"
-    ]
-
-    found_skills = []
+    detected_skills = []
 
     text = text.lower()
 
-    for skill in skills:
+    for skill in skills_database:
 
-        if skill in text:
-            found_skills.append(skill)
+        if re.search(r'\b' + re.escape(skill) + r'\b', text):
 
-    return found_skills
+            detected_skills.append(skill)
+
+    return list(set(detected_skills))

@@ -18,10 +18,8 @@ from ml_model import (
 
 app = Flask(__name__)
 
-# Upload folder
 UPLOAD_FOLDER = "uploads"
 
-# Create uploads folder automatically
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -35,17 +33,14 @@ def home():
 @app.route("/analyze", methods=["POST"])
 def analyze_resume():
 
-    # Check if file uploaded
     if "resume" not in request.files:
         return "No file uploaded"
 
     file = request.files["resume"]
 
-    # Check empty file
     if file.filename == "":
         return "Please upload a resume"
 
-    # Save uploaded file
     filepath = os.path.join(
         app.config["UPLOAD_FOLDER"],
         file.filename
@@ -53,32 +48,26 @@ def analyze_resume():
 
     file.save(filepath)
 
-    # Extract resume text
     resume_text = extract_resume_text(
         filepath
     )
 
-    # Extract skills
     skills = extract_skills(
         resume_text
     )
 
-    # Predict role
     predicted_role = predict_role(
         skills
     )
 
-    # Resume score
     resume_score = calculate_resume_score(
         skills
     )
 
-    # Missing skills
     missing = missing_skills(
         skills
     )
 
-    # AI Suggestions (safe for Render free plan)
     try:
         ai_suggestions = get_resume_suggestions(
             resume_text[:2000]
@@ -91,38 +80,91 @@ def analyze_resume():
 - Make resume ATS friendly
 """
 
-    # Result page
     return f"""
     <html>
+
     <head>
         <title>Resume Analysis</title>
+
+        <style>
+            body {{
+                font-family: Arial;
+                background: #f4f4f4;
+                padding: 30px;
+            }}
+
+            .container {{
+                background: white;
+                padding: 30px;
+                border-radius: 12px;
+                max-width: 800px;
+                margin: auto;
+                box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            }}
+
+            .score {{
+                font-size: 28px;
+                color: green;
+                font-weight: bold;
+            }}
+
+            .skill {{
+                display: inline-block;
+                background: #007bff;
+                color: white;
+                padding: 8px 15px;
+                border-radius: 20px;
+                margin: 5px;
+            }}
+
+            .missing {{
+                background: red;
+            }}
+
+            h2 {{
+                color: #333;
+            }}
+        </style>
     </head>
 
-    <body style="font-family: Arial; padding: 30px;">
+    <body>
 
-        <h2>Resume Analysis Complete</h2>
+    <div class="container">
 
-        <h3>Resume Score:</h3>
-        <p>{resume_score}/100</p>
+        <h2>Resume Analysis Complete 🚀</h2>
 
-        <h3>Detected Skills:</h3>
-        <ul>
-            {''.join([f'<li>{skill}</li>' for skill in skills])}
-        </ul>
+        <h3>ATS Resume Score</h3>
+        <p class="score">{resume_score}/100</p>
 
-        <h3>Missing Skills:</h3>
-        <ul>
-            {''.join([f'<li>{skill}</li>' for skill in missing])}
-        </ul>
+        <h3>Detected Skills</h3>
 
-        <h3>Recommended Role:</h3>
-        <p>{predicted_role}</p>
+        {
+            ''.join([
+                f'<span class="skill">{skill}</span>'
+                for skill in skills
+            ])
+        }
 
-        <h3>AI Suggestions:</h3>
+        <h3>Missing Skills</h3>
+
+        {
+            ''.join([
+                f'<span class="skill missing">{skill}</span>'
+                for skill in missing
+            ])
+        }
+
+        <h3>Recommended Role</h3>
+        <p><b>{predicted_role}</b></p>
+
+        <h3>AI Suggestions</h3>
         <pre>{ai_suggestions}</pre>
 
-        <br>
+        <br><br>
+
         <a href="/">Analyze Another Resume</a>
+
+    </div>
 
     </body>
     </html>
