@@ -7,7 +7,6 @@ client = OpenAI(
     api_key=os.getenv("OPENROUTER_API_KEY")
 )
 
-
 def extract_resume_text(file_path):
 
     text = ""
